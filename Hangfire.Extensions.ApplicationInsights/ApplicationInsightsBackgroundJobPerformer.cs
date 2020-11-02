@@ -55,6 +55,7 @@ namespace Hangfire.Extensions.ApplicationInsights
                 var result = _inner.Perform(context);
 
                 requestTelemetry.Success = true;
+                requestTelemetry.ResponseCode = "Success";
 
                 return result;
             }
