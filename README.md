@@ -3,7 +3,9 @@
 # Hangfire.Extensions.ApplicationInsights
 Provides Jobs as Application Insight requests.
 
-![Example](./example.png)
+![Example 1](./example.png)
+
+![Example 2](./example2.png)
 
 ## Install Package
 This assumes you already have `Hangfire` and `Microsoft.ApplicationInsights` already installed and configured.
