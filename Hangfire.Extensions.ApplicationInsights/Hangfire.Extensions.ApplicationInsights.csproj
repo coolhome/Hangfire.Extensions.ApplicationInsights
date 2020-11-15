@@ -2,6 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/coolhome/Hangfire.Extensions.ApplicationInsights</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/coolhome/Hangfire.Extensions.ApplicationInsights</PackageProjectUrl>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
