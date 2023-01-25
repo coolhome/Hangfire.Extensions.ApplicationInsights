@@ -1,11 +1,11 @@
-﻿using Hangfire.Client;
+﻿using System.Threading.Tasks;
+using Hangfire.Client;
 using Hangfire.Common;
 using Hangfire.Server;
 using Hangfire.States;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Threading.Tasks;
 
 namespace Hangfire.Extensions.ApplicationInsights
 {
@@ -36,6 +36,8 @@ namespace Hangfire.Extensions.ApplicationInsights
                     serviceProvider.GetRequiredService<TelemetryClient>()
                 )
             );
+
+            GlobalJobFilters.Filters.Add(new ApplicationInsightsBackgroundJobFilter());
         }
     }
 }

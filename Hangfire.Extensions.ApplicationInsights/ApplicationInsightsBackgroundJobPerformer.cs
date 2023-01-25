@@ -20,29 +20,31 @@ namespace Hangfire.Extensions.ApplicationInsights
 
         public object Perform(PerformContext context)
         {
-            var requestTelemetry = new RequestTelemetry()
+            var dependencyTelemetry = new DependencyTelemetry()
             {
                 Name = $"JOB {context.BackgroundJob.Job.Type.Name}.{context.BackgroundJob.Job.Method.Name}",
             };
 
+            dependencyTelemetry.Context.Operation.Id = context.GetJobParameter<string>("operationId");
+            dependencyTelemetry.Context.Operation.ParentId = context.GetJobParameter<string>("operationParentId");
 
             // Track Hangfire Job as a Request (operation) in AI
             var operation = _telemetryClient.StartOperation(
-                requestTelemetry
+                dependencyTelemetry
             );
 
             try
             {
-                requestTelemetry.Properties.Add(
+                dependencyTelemetry.Properties.Add(
                     "JobId", context.BackgroundJob.Id
                 );
-                requestTelemetry.Properties.Add(
+                dependencyTelemetry.Properties.Add(
                     "JobCreatedAt", context.BackgroundJob.CreatedAt.ToString("O")
                 );
 
                 try
                 {
-                    requestTelemetry.Properties.Add(
+                    dependencyTelemetry.Properties.Add(
                         "JobArguments",
                         System.Text.Json.JsonSerializer.Serialize(context.BackgroundJob.Job.Args)
                     );
@@ -54,15 +56,13 @@ namespace Hangfire.Extensions.ApplicationInsights
 
                 var result = _inner.Perform(context);
 
-                requestTelemetry.Success = true;
-                requestTelemetry.ResponseCode = "Success";
+                dependencyTelemetry.Success = true;
 
                 return result;
             }
             catch (Exception exception)
             {
-                requestTelemetry.Success = false;
-                requestTelemetry.ResponseCode = "Failed";
+                dependencyTelemetry.Success = false;
 
                 _telemetryClient.TrackException(exception);
 
