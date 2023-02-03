@@ -28,7 +28,7 @@ namespace Hangfire.Extensions.ApplicationInsights
             dependencyTelemetry.Context.Operation.Id = context.GetJobParameter<string>("operationId");
             dependencyTelemetry.Context.Operation.ParentId = context.GetJobParameter<string>("operationParentId");
 
-            // Track Hangfire Job as a Request (operation) in AI
+            // Track Hangfire Job as a Dependency (operation) in AI
             var operation = _telemetryClient.StartOperation(
                 dependencyTelemetry
             );
