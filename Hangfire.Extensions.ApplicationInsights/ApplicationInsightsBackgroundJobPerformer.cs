@@ -3,6 +3,8 @@ using Hangfire.Server;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using System;
+using System.Linq;
+using System.Threading;
 
 namespace Hangfire.Extensions.ApplicationInsights
 {
@@ -46,7 +48,7 @@ namespace Hangfire.Extensions.ApplicationInsights
                 {
                     dependencyTelemetry.Properties.Add(
                         "JobArguments",
-                        System.Text.Json.JsonSerializer.Serialize(context.BackgroundJob.Job.Args)
+                        System.Text.Json.JsonSerializer.Serialize(context.BackgroundJob.Job.Args?.Where(c => c.GetType() != typeof(CancellationToken)))
                     );
                 }
                 catch
