@@ -1,19 +1,22 @@
-﻿using Hangfire.Annotations;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using Hangfire.Annotations;
 using Hangfire.Server;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
-using System;
-using System.Linq;
-using System.Threading;
+using Microsoft.ApplicationInsights.Extensibility.Implementation;
 
 namespace Hangfire.Extensions.ApplicationInsights
 {
-    public class ApplicationInsightsBackgroundJobPerformer : IBackgroundJobPerformer
+    public class ApplicationInsightsBackgroundJobPerformer<T> : IBackgroundJobPerformer
+        where T : OperationTelemetry
     {
         private readonly IBackgroundJobPerformer _inner;
         private readonly TelemetryClient _telemetryClient;
 
-        public ApplicationInsightsBackgroundJobPerformer([NotNull] IBackgroundJobPerformer inner,
+        public ApplicationInsightsBackgroundJobPerformer(
+            [NotNull] IBackgroundJobPerformer inner,
             TelemetryClient telemetryClient)
         {
             _inner = inner ?? throw new ArgumentNullException(nameof(inner));
@@ -22,10 +25,9 @@ namespace Hangfire.Extensions.ApplicationInsights
 
         public object Perform(PerformContext context)
         {
-            var dependencyTelemetry = new DependencyTelemetry()
-            {
-                Name = $"JOB {context.BackgroundJob.Job.Type.Name}.{context.BackgroundJob.Job.Method.Name}",
-            };
+            var dependencyTelemetry = Activator.CreateInstance<T>();
+
+            dependencyTelemetry.Name = $"JOB {context.BackgroundJob.Job.Type.Name}.{context.BackgroundJob.Job.Method.Name}";
 
             dependencyTelemetry.Context.Operation.Id = context.GetJobParameter<string>("operationId");
             dependencyTelemetry.Context.Operation.ParentId = context.GetJobParameter<string>("operationParentId");
@@ -59,12 +61,20 @@ namespace Hangfire.Extensions.ApplicationInsights
                 var result = _inner.Perform(context);
 
                 dependencyTelemetry.Success = true;
+                if (dependencyTelemetry is RequestTelemetry)
+                {
+                    (dependencyTelemetry as RequestTelemetry).ResponseCode = "Success";
+                }
 
                 return result;
             }
             catch (Exception exception)
             {
                 dependencyTelemetry.Success = false;
+                if (dependencyTelemetry is RequestTelemetry)
+                {
+                    (dependencyTelemetry as RequestTelemetry).ResponseCode = "Failed";
+                }
 
                 _telemetryClient.TrackException(exception);
 
