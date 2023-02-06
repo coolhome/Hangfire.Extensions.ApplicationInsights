@@ -1,17 +1,19 @@
-﻿using Hangfire.Client;
+﻿using System.Threading.Tasks;
+using Hangfire.Client;
 using Hangfire.Common;
 using Hangfire.Server;
 using Hangfire.States;
 using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility.Implementation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Threading.Tasks;
 
 namespace Hangfire.Extensions.ApplicationInsights
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddHangfireApplicationInsights(this IServiceCollection services)
+        public static void AddHangfireApplicationInsights<T>(this IServiceCollection services)
+            where T : OperationTelemetry
         {
             services.TryAddSingleton<IBackgroundJobFactory>(serviceProvider =>
                 new ApplicationInsightsBackgroundJobFactory(
@@ -27,7 +29,7 @@ namespace Hangfire.Extensions.ApplicationInsights
             );
 
             services.TryAddSingleton<IBackgroundJobPerformer>(serviceProvider =>
-                new ApplicationInsightsBackgroundJobPerformer(
+                new ApplicationInsightsBackgroundJobPerformer<T>(
                     new BackgroundJobPerformer(
                         serviceProvider.GetRequiredService<IJobFilterProvider>(),
                         serviceProvider.GetRequiredService<JobActivator>(),
@@ -36,6 +38,8 @@ namespace Hangfire.Extensions.ApplicationInsights
                     serviceProvider.GetRequiredService<TelemetryClient>()
                 )
             );
+
+            GlobalJobFilters.Filters.Add(new ApplicationInsightsBackgroundJobFilter());
         }
     }
 }

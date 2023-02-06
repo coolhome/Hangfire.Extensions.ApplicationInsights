@@ -1,6 +1,7 @@
 using Hangfire;
 using Hangfire.Extensions.ApplicationInsights;
 using Hangfire.MemoryStorage;
+using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -27,7 +28,7 @@ namespace Sample
                         //.UseSqlServerStorage("Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=HangfireApplicationInsights;Integrated Security=SSPI;")
                     );
 
-                    services.AddHangfireApplicationInsights();
+                    services.AddHangfireApplicationInsights<DependencyTelemetry>();
                     services.AddHangfireServer();
 
                     services.AddScoped<SampleJobs>();

@@ -1,17 +1,22 @@
-﻿using Hangfire.Annotations;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using Hangfire.Annotations;
 using Hangfire.Server;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
-using System;
+using Microsoft.ApplicationInsights.Extensibility.Implementation;
 
 namespace Hangfire.Extensions.ApplicationInsights
 {
-    public class ApplicationInsightsBackgroundJobPerformer : IBackgroundJobPerformer
+    public class ApplicationInsightsBackgroundJobPerformer<T> : IBackgroundJobPerformer
+        where T : OperationTelemetry
     {
         private readonly IBackgroundJobPerformer _inner;
         private readonly TelemetryClient _telemetryClient;
 
-        public ApplicationInsightsBackgroundJobPerformer([NotNull] IBackgroundJobPerformer inner,
+        public ApplicationInsightsBackgroundJobPerformer(
+            [NotNull] IBackgroundJobPerformer inner,
             TelemetryClient telemetryClient)
         {
             _inner = inner ?? throw new ArgumentNullException(nameof(inner));
@@ -20,31 +25,32 @@ namespace Hangfire.Extensions.ApplicationInsights
 
         public object Perform(PerformContext context)
         {
-            var requestTelemetry = new RequestTelemetry()
-            {
-                Name = $"JOB {context.BackgroundJob.Job.Type.Name}.{context.BackgroundJob.Job.Method.Name}",
-            };
+            var dependencyTelemetry = Activator.CreateInstance<T>();
 
+            dependencyTelemetry.Name = $"JOB {context.BackgroundJob.Job.Type.Name}.{context.BackgroundJob.Job.Method.Name}";
 
-            // Track Hangfire Job as a Request (operation) in AI
+            dependencyTelemetry.Context.Operation.Id = context.GetJobParameter<string>("operationId");
+            dependencyTelemetry.Context.Operation.ParentId = context.GetJobParameter<string>("operationParentId");
+
+            // Track Hangfire Job as a Dependency (operation) in AI
             var operation = _telemetryClient.StartOperation(
-                requestTelemetry
+                dependencyTelemetry
             );
 
             try
             {
-                requestTelemetry.Properties.Add(
+                dependencyTelemetry.Properties.Add(
                     "JobId", context.BackgroundJob.Id
                 );
-                requestTelemetry.Properties.Add(
+                dependencyTelemetry.Properties.Add(
                     "JobCreatedAt", context.BackgroundJob.CreatedAt.ToString("O")
                 );
 
                 try
                 {
-                    requestTelemetry.Properties.Add(
+                    dependencyTelemetry.Properties.Add(
                         "JobArguments",
-                        System.Text.Json.JsonSerializer.Serialize(context.BackgroundJob.Job.Args)
+                        System.Text.Json.JsonSerializer.Serialize(context.BackgroundJob.Job.Args?.Where(c => c.GetType() != typeof(CancellationToken)))
                     );
                 }
                 catch
@@ -54,15 +60,21 @@ namespace Hangfire.Extensions.ApplicationInsights
 
                 var result = _inner.Perform(context);
 
-                requestTelemetry.Success = true;
-                requestTelemetry.ResponseCode = "Success";
+                dependencyTelemetry.Success = true;
+                if (dependencyTelemetry is RequestTelemetry)
+                {
+                    (dependencyTelemetry as RequestTelemetry).ResponseCode = "Success";
+                }
 
                 return result;
             }
             catch (Exception exception)
             {
-                requestTelemetry.Success = false;
-                requestTelemetry.ResponseCode = "Failed";
+                dependencyTelemetry.Success = false;
+                if (dependencyTelemetry is RequestTelemetry)
+                {
+                    (dependencyTelemetry as RequestTelemetry).ResponseCode = "Failed";
+                }
 
                 _telemetryClient.TrackException(exception);
 
