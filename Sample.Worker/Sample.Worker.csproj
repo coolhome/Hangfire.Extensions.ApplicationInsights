@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <UserSecretsId>dotnet-Sample-FA55BA29-A477-417C-A116-25CD7274A942</UserSecretsId>
+        <StartupObject>Sample.Worker.Program</StartupObject>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Hangfire.AspNetCore" Version="1.7.34" />
+        <PackageReference Include="Hangfire.InMemory" Version="0.3.7" />
+        <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.21.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Hangfire.Extensions.ApplicationInsights\Hangfire.Extensions.ApplicationInsights.csproj" />
+    </ItemGroup>
+</Project>

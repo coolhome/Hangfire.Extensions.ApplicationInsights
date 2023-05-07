@@ -1,11 +1,6 @@
 using Hangfire;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Sample
+namespace Sample.WebApi
 {
     /// <summary>
     /// A background service that will enqueue a random <see cref="SampleJobs"/> method every second.

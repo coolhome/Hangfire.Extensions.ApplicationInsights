@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hangfire.Extensions.ApplicationInsights", "Hangfire.Extensions.ApplicationInsights\Hangfire.Extensions.ApplicationInsights.csproj", "{BDB4CB3D-8865-439C-9CA6-A71E7D5A0DAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "Sample\Sample.csproj", "{FA7DA903-3FBC-4EEB-8586-A8FC7088FD27}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Worker", "Sample.Worker\Sample.Worker.csproj", "{FA7DA903-3FBC-4EEB-8586-A8FC7088FD27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.WebApi", "Sample.WebApi\Sample.WebApi.csproj", "{9E96C9A7-1744-468E-9998-80336FFF0B70}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{FA7DA903-3FBC-4EEB-8586-A8FC7088FD27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA7DA903-3FBC-4EEB-8586-A8FC7088FD27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA7DA903-3FBC-4EEB-8586-A8FC7088FD27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E96C9A7-1744-468E-9998-80336FFF0B70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E96C9A7-1744-468E-9998-80336FFF0B70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E96C9A7-1744-468E-9998-80336FFF0B70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E96C9A7-1744-468E-9998-80336FFF0B70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

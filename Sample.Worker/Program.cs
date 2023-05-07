@@ -1,11 +1,9 @@
 using Hangfire;
 using Hangfire.Extensions.ApplicationInsights;
-using Hangfire.MemoryStorage;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Sample
+namespace Sample.Worker
 {
     public class Program
     {
@@ -24,7 +22,7 @@ namespace Sample
                         .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                         .UseSimpleAssemblyNameTypeSerializer()
                         .UseRecommendedSerializerSettings()
-                        .UseMemoryStorage()
+                        .UseInMemoryStorage()
                         //.UseSqlServerStorage("Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=HangfireApplicationInsights;Integrated Security=SSPI;")
                     );
 

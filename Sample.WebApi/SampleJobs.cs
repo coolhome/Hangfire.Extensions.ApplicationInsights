@@ -1,10 +1,7 @@
-using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 
-namespace Sample
+namespace Sample.WebApi
 {
     public class SampleJobData
     {
