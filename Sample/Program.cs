@@ -1,6 +1,7 @@
 using Hangfire;
 using Hangfire.Extensions.ApplicationInsights;
 using Hangfire.MemoryStorage;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
