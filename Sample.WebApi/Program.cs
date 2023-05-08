@@ -1,6 +1,7 @@
 using Hangfire;
 using Hangfire.Extensions.ApplicationInsights;
 using Sample.WebApi;
+using Sample.WebApi.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,9 +21,12 @@ builder.Services.AddHangfire(configuration => configuration
 );
 
 builder.Services.AddApplicationInsightsTelemetry();
+builder.Services.AddApplicationInsightsTelemetryProcessor<HangfireDashboardTelemetryProcessor>();
 builder.Services.AddHangfireApplicationInsights();
 builder.Services.AddHangfireServer();
 
+
+builder.Services.AddScoped<NationalWeatherService>();
 
 builder.Services.AddScoped<SampleJobs>();
 builder.Services.AddHostedService<JobOrchestrator>();

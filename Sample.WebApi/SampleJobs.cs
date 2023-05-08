@@ -26,7 +26,7 @@ namespace Sample.WebApi
 
         private Task RandomDelay()
         {
-            return Task.Delay(_random.Next(50, 3000));
+            return Task.Delay(_random.Next(30000, 30000 * 3));
         }
 
         private bool ShouldThrowError()

@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Sample.WebApi.Controllers;
@@ -6,27 +8,33 @@ namespace Sample.WebApi.Controllers;
 [Route("[controller]")]
 public class WeatherForecastController : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
     private readonly ILogger<WeatherForecastController> _logger;
+    private readonly NationalWeatherService _nationalWeatherService;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    private readonly IBackgroundJobClient _backgroundJobClient;
+
+    public WeatherForecastController(
+        ILogger<WeatherForecastController> logger,
+        NationalWeatherService nationalWeatherService,
+        IBackgroundJobClient backgroundJobClient
+    )
     {
         _logger = logger;
+        _backgroundJobClient = backgroundJobClient;
+        _nationalWeatherService = nationalWeatherService;
     }
 
     [HttpGet(Name = "GetWeatherForecast")]
     public IEnumerable<WeatherForecast> Get()
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+        return _nationalWeatherService.GetWeatherForecast().AsEnumerable();
+    }
+
+    [HttpPost(Name = "UpdateWeatherForecast")]
+    public OkObjectResult Update()
+    {
+        var jobId = _backgroundJobClient.Enqueue(() => _nationalWeatherService.UpdateLatestForecast());
+
+        return Ok($"Processing {jobId}");
     }
 }
