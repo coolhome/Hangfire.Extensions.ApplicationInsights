@@ -6,12 +6,13 @@ using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights.DataContracts;
 
 namespace Hangfire.Extensions.ApplicationInsights
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddHangfireApplicationInsights(this IServiceCollection services)
+        public static void AddHangfireApplicationInsights(this IServiceCollection services, bool enableFilter = false)
         {
             services.TryAddSingleton<IBackgroundJobFactory>(serviceProvider =>
                 new ApplicationInsightsBackgroundJobFactory(
@@ -27,15 +28,25 @@ namespace Hangfire.Extensions.ApplicationInsights
             );
 
             services.TryAddSingleton<IBackgroundJobPerformer>(serviceProvider =>
-                new ApplicationInsightsBackgroundJobPerformer(
-                    new BackgroundJobPerformer(
-                        serviceProvider.GetRequiredService<IJobFilterProvider>(),
-                        serviceProvider.GetRequiredService<JobActivator>(),
-                        TaskScheduler.Default
-                    ),
-                    serviceProvider.GetRequiredService<TelemetryClient>()
-                )
-            );
+            {
+                return enableFilter
+                    ? new ApplicationInsightsBackgroundJobPerformer<DependencyTelemetry>(
+                        new BackgroundJobPerformer(
+                            serviceProvider.GetRequiredService<IJobFilterProvider>(),
+                            serviceProvider.GetRequiredService<JobActivator>(),
+                            TaskScheduler.Default
+                        ),
+                        serviceProvider.GetRequiredService<TelemetryClient>()
+                    )
+                    : new ApplicationInsightsBackgroundJobPerformer<RequestTelemetry>(
+                        new BackgroundJobPerformer(
+                            serviceProvider.GetRequiredService<IJobFilterProvider>(),
+                            serviceProvider.GetRequiredService<JobActivator>(),
+                            TaskScheduler.Default
+                        ),
+                        serviceProvider.GetRequiredService<TelemetryClient>()
+                    );
+            });
         }
     }
 }
