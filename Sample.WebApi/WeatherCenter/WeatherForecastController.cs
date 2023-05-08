@@ -1,8 +1,7 @@
-using System.Collections.Immutable;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Sample.WebApi.Controllers;
+namespace Sample.WebApi.WeatherCenter;
 
 [ApiController]
 [Route("[controller]")]

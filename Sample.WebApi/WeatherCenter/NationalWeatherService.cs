@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Sample.WebApi.Controllers;
+namespace Sample.WebApi.WeatherCenter;
 
 public class NationalWeatherService
 {

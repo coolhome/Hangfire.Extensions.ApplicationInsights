@@ -1,6 +1,6 @@
 using Hangfire;
 
-namespace Sample.WebApi
+namespace Sample.WebApi.BackgroundTasks
 {
     /// <summary>
     /// A background service that will enqueue a random <see cref="SampleJobs"/> method every second.

@@ -1,7 +1,7 @@
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 
-namespace Sample.WebApi
+namespace Sample.WebApi.BackgroundTasks
 {
     public class SampleJobData
     {

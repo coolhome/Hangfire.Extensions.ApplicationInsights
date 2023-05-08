@@ -1,7 +1,8 @@
 using Hangfire;
 using Hangfire.Extensions.ApplicationInsights;
 using Sample.WebApi;
-using Sample.WebApi.Controllers;
+using Sample.WebApi.BackgroundTasks;
+using Sample.WebApi.WeatherCenter;
 
 var builder = WebApplication.CreateBuilder(args);
 

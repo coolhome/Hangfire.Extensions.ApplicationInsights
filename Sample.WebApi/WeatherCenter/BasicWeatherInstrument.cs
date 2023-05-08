@@ -1,6 +1,6 @@
 ﻿using Bogus;
 
-namespace Sample.WebApi.Controllers;
+namespace Sample.WebApi.WeatherCenter;
 
 public class BasicWeatherInstrument
 {

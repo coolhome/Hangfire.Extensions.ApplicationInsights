@@ -1,6 +1,7 @@
 ﻿using Hangfire;
+using Sample.WebApi.WeatherCenter;
 
-namespace Sample.WebApi.Controllers;
+namespace Sample.WebApi.BackgroundTasks;
 
 public class RegisterBackgroundJobs : BackgroundService
 {
@@ -14,8 +15,13 @@ public class RegisterBackgroundJobs : BackgroundService
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _recurringJobManager.AddOrUpdate<NationalWeatherService>(
-            "EveryMinute",
+            "UpdateLatestForecastEveryMinute",
             service => service.UpdateLatestForecast(),
+            Cron.Minutely()
+        );
+        _recurringJobManager.AddOrUpdate<SequenceOfJobs>(
+            "SequenceEveryMinute",
+            service => service.StartSequence(),
             Cron.Minutely()
         );
         return Task.CompletedTask;
