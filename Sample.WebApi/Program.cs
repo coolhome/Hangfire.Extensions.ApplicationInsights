@@ -1,5 +1,6 @@
 using Hangfire;
 using Hangfire.Extensions.ApplicationInsights;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 using Sample.WebApi;
 using Sample.WebApi.BackgroundTasks;
 using Sample.WebApi.WeatherCenter;
@@ -16,18 +17,20 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddHangfire(configuration => configuration
-        .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+        .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
         .UseSimpleAssemblyNameTypeSerializer()
         .UseRecommendedSerializerSettings()
+        .UseFilter(new Hangfire.Extensions.ApplicationInsights.ApplicationInsightsBackgroundJobFilter())
         .UseInMemoryStorage()
-        .UseFilter<ApplicationInsightsBackgroundJobFilter>(new ApplicationInsightsBackgroundJobFilter())
     //.UseSqlServerStorage("Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=HangfireApplicationInsights;Integrated Security=SSPI;")
 );
 
 builder.Services.AddApplicationInsightsTelemetry(options => { options.DeveloperMode = true; });
 
 builder.Services.AddApplicationInsightsTelemetryProcessor<HangfireDashboardTelemetryProcessor>();
-builder.Services.AddHangfireApplicationInsights(enableFilter: true);
+builder.Services.AddHangfireApplicationInsights(
+    enableFilter: false
+); // TODO: Add note - must be between Client + Server to wrap BackgroundJobClient
 builder.Services.AddHangfireServer();
 
 

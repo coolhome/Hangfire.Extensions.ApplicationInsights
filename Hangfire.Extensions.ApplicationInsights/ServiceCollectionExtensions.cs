@@ -1,4 +1,6 @@
-﻿using Hangfire.Client;
+﻿using System.Diagnostics;
+using System.Linq;
+using Hangfire.Client;
 using Hangfire.Common;
 using Hangfire.Server;
 using Hangfire.States;
@@ -20,6 +22,47 @@ namespace Hangfire.Extensions.ApplicationInsights
                     )
                 )
             );
+
+            services.TryAddSingleton<IBackgroundJobStateChanger>(serviceProvider =>
+                new ApplicationInsightsBackgroundJobStateChanger(
+                    new BackgroundJobStateChanger(serviceProvider.GetRequiredService<IJobFilterProvider>())
+                )
+            );
+
+            services.Replace(
+                ServiceDescriptor.Describe(
+                    typeof(IBackgroundJobClient),
+                    provider => new BackgroundJobClient(
+                        provider.GetRequiredService<IBackgroundJobClientFactoryV2>()
+                            .GetClient(provider.GetRequiredService<JobStorage>()),
+                        provider.GetRequiredService<TelemetryClient>()
+                    ),
+                    ServiceLifetime.Singleton
+                )
+            );
+            services.Replace(
+                ServiceDescriptor.Describe(
+                    typeof(IBackgroundJobClientV2),
+                    provider => new BackgroundJobClient(
+                        provider.GetRequiredService<IBackgroundJobClientFactoryV2>()
+                            .GetClientV2(provider.GetRequiredService<JobStorage>()),
+                        provider.GetRequiredService<TelemetryClient>()
+                    ),
+                    ServiceLifetime.Singleton
+                )
+            );
+
+            /*
+            serviceProvider =>
+            new BackgroundJobClient(
+                new Hangfire.BackgroundJobClient(
+                    serviceProvider.GetRequiredService<JobStorage>(),
+                    serviceProvider.GetRequiredService<IJobFilterProvider>()
+                ),
+                serviceProvider.GetRequiredService<TelemetryClient>()
+            )
+        );
+        */
 
             services.TryAddSingleton<IBackgroundJobStateChanger>(serviceProvider =>
                 new ApplicationInsightsBackgroundJobStateChanger(

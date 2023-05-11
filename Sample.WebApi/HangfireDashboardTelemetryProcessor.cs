@@ -11,7 +11,7 @@ public class HangfireDashboardTelemetryProcessor : ITelemetryProcessor
         Next = next;
     }
 
-    private ITelemetryProcessor Next { get; set; }
+    private ITelemetryProcessor Next { get; }
 
     private static string[] PartialOperationNames =
     {
@@ -23,11 +23,10 @@ public class HangfireDashboardTelemetryProcessor : ITelemetryProcessor
     {
         if (item is RequestTelemetry requestTelemetry && requestTelemetry.Url != null)
         {
-            // Test
-            var test = requestTelemetry.Id;
-
             foreach (var partialName in PartialOperationNames)
             {
+                // Remove the IDs from URLs, to group these operations by the base url w/o the ID.
+                // Reduces the amount of noise in Operations tab.
                 if (requestTelemetry.Url.PathAndQuery.StartsWith(partialName))
                 {
                     requestTelemetry.Name = requestTelemetry.Name.Substring(
@@ -43,6 +42,6 @@ public class HangfireDashboardTelemetryProcessor : ITelemetryProcessor
             }
         }
 
-        this.Next.Process(item);
+        Next.Process(item);
     }
 }

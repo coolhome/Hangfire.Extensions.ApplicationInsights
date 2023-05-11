@@ -16,7 +16,7 @@ public class RegisterBackgroundJobs : BackgroundService
     {
         _recurringJobManager.AddOrUpdate<NationalWeatherService>(
             "UpdateLatestForecastEveryMinute",
-            service => service.UpdateLatestForecast(),
+            service => service.UpdateLatestForecast(string.Empty),
             Cron.Minutely()
         );
         _recurringJobManager.AddOrUpdate<SequenceOfJobs>(

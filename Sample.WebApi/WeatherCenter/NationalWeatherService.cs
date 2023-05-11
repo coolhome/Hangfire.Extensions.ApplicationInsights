@@ -24,9 +24,8 @@ public class NationalWeatherService
         return results;
     }
 
-    public async Task UpdateLatestForecast()
+    public async Task UpdateLatestForecast(string activityId)
     {
-        await Task.Delay(_random.Next(50, 3000));
         var currentForecastState = _weatherInstrument.ReadForecast();
         // setWeather(currentForecastState)
 

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +10,6 @@ public class WeatherForecastController : ControllerBase
 {
     private readonly ILogger<WeatherForecastController> _logger;
     private readonly NationalWeatherService _nationalWeatherService;
-
     private readonly IBackgroundJobClient _backgroundJobClient;
 
     public WeatherForecastController(
@@ -32,7 +32,12 @@ public class WeatherForecastController : ControllerBase
     [HttpPost(Name = "UpdateWeatherForecast")]
     public OkObjectResult Update()
     {
-        var jobId = _backgroundJobClient.Enqueue(() => _nationalWeatherService.UpdateLatestForecast());
+        var activityId = Activity.Current?.Id ?? "";
+        var jobId = _backgroundJobClient.Enqueue(() =>
+            _nationalWeatherService.UpdateLatestForecast(activityId)
+        );
+
+        _logger.LogWarning("Enqueued job");
 
         return Ok($"Processing {jobId}");
     }
