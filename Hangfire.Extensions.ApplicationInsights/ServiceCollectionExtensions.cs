@@ -36,6 +36,8 @@ namespace Hangfire.Extensions.ApplicationInsights
                     serviceProvider.GetRequiredService<TelemetryClient>()
                 )
             );
+
+            services.TryAddSingleton<ApplicationInsightsBackgroundJobFilter>();
         }
     }
 }

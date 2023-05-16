@@ -3,6 +3,8 @@ using Hangfire.Server;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using System;
+using System.Linq;
+using System.Threading;
 
 namespace Hangfire.Extensions.ApplicationInsights
 {
@@ -20,32 +22,37 @@ namespace Hangfire.Extensions.ApplicationInsights
 
         public object Perform(PerformContext context)
         {
-            var requestTelemetry = new RequestTelemetry()
-            {
-                Name = $"JOB {context.BackgroundJob.Job.Type.Name}.{context.BackgroundJob.Job.Method.Name}",
-            };
-
-
-            // Track Hangfire Job as a Request (operation) in AI
-            var operation = _telemetryClient.StartOperation(
-                requestTelemetry
+            var operation = _telemetryClient.StartOperation<RequestTelemetry>(
+                $"JOB {context.BackgroundJob.Job.Type.Name}.{context.BackgroundJob.Job.Method.Name}",
+                context.GetJobParameter<string>("Activity.Id"),
+                context.GetJobParameter<string>("Activity.RootId")
             );
 
             try
             {
-                requestTelemetry.Properties.Add(
+                operation.Telemetry.Properties.Add(
                     "JobId", context.BackgroundJob.Id
                 );
-                requestTelemetry.Properties.Add(
+                operation.Telemetry.Properties.Add(
                     "JobCreatedAt", context.BackgroundJob.CreatedAt.ToString("O")
+                );
+                operation.Telemetry.Properties.Add(
+                    "JobType", context.BackgroundJob.Job.Type.FullName + "." + context.BackgroundJob.Job.Method.Name
+                );
+                operation.Telemetry.Properties.Add(
+                    "JobMethod", context.BackgroundJob.Job.Method.Name
                 );
 
                 try
                 {
-                    requestTelemetry.Properties.Add(
-                        "JobArguments",
-                        System.Text.Json.JsonSerializer.Serialize(context.BackgroundJob.Job.Args)
-                    );
+                    if (context.BackgroundJob != null)
+                        operation.Telemetry.Properties.Add(
+                            "JobArguments",
+                            System.Text.Json.JsonSerializer.Serialize(
+                                context.BackgroundJob.Job.Args
+                                    ?.Where(c => c.GetType() != typeof(CancellationToken))
+                            )
+                        );
                 }
                 catch
                 {
@@ -54,18 +61,16 @@ namespace Hangfire.Extensions.ApplicationInsights
 
                 var result = _inner.Perform(context);
 
-                requestTelemetry.Success = true;
-                requestTelemetry.ResponseCode = "Success";
+                operation.Telemetry.Success = true;
+                operation.Telemetry.ResponseCode = "Completed";
 
                 return result;
             }
             catch (Exception exception)
             {
-                requestTelemetry.Success = false;
-                requestTelemetry.ResponseCode = "Failed";
-
+                operation.Telemetry.Success = false;
+                operation.Telemetry.ResponseCode = "Failed";
                 _telemetryClient.TrackException(exception);
-
                 throw;
             }
             finally
