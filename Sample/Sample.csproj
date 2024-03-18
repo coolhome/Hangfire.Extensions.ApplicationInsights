@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<UserSecretsId>dotnet-Sample-FA55BA29-A477-417C-A116-25CD7274A942</UserSecretsId>
 		<StartupObject>Sample.Program</StartupObject>
 	</PropertyGroup>
