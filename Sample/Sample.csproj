@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<UserSecretsId>dotnet-Sample-FA55BA29-A477-417C-A116-25CD7274A942</UserSecretsId>
 		<StartupObject>Sample.Program</StartupObject>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Hangfire.AspNetCore" Version="1.7.17" />
+		<PackageReference Include="Hangfire.AspNetCore" Version="1.7.37" />
 		<PackageReference Include="Hangfire.MemoryStorage" Version="1.7.0" />
-		<PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.15.0" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.9" />
+		<PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.22.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
