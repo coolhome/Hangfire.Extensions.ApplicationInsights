@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/coolhome/Hangfire.Extensions.ApplicationInsights</RepositoryUrl>
     <PackageProjectUrl>https://github.com/coolhome/Hangfire.Extensions.ApplicationInsights</PackageProjectUrl>
@@ -17,6 +17,7 @@
     <PackageReference Include="Hangfire.Core" Version="1.7.17" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.21.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+    <PackageReference Include="System.Text.Json" Version="8.0.3" />
   </ItemGroup>
 
 </Project>
