@@ -6,7 +6,6 @@
     <RepositoryUrl>https://github.com/coolhome/Hangfire.Extensions.ApplicationInsights</RepositoryUrl>
     <PackageProjectUrl>https://github.com/coolhome/Hangfire.Extensions.ApplicationInsights</PackageProjectUrl>
     <VersionPrefix>1.1.0</VersionPrefix>
-    <VersionSuffix>alpha1</VersionSuffix>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
