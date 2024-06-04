@@ -50,7 +50,7 @@ namespace Hangfire.Extensions.ApplicationInsights
                             "JobArguments",
                             System.Text.Json.JsonSerializer.Serialize(
                                 context.BackgroundJob.Job.Args
-                                    ?.Where(c => c.GetType() != typeof(CancellationToken))
+                                    ?.Where(c => c?.GetType() != typeof(CancellationToken))
                             )
                         );
                 }
