@@ -31,7 +31,7 @@ namespace Hangfire.Extensions.ApplicationInsights
                 operation.Telemetry.Properties.Add("JobType",
                     filterContext.Job.Type.FullName + "." + filterContext.Job.Method.Name);
                 operation.Telemetry.Properties.Add("JobMethod", filterContext.Job.Method.Name);
-                operation.Telemetry.Properties.Add("JobState", filterContext.InitialState.Name);
+                operation.Telemetry.Properties.Add("JobState", filterContext.InitialState?.Name);
                 filterContext.Items["Telemetry.Operation"] = operation;
                 operation.Telemetry.Start();
             }
