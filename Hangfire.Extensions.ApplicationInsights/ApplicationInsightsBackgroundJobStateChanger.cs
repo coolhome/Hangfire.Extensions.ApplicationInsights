@@ -1,6 +1,5 @@
 ﻿using Hangfire.Annotations;
 using Hangfire.States;
-using Microsoft.ApplicationInsights;
 using System;
 
 namespace Hangfire.Extensions.ApplicationInsights
